@@ -101,10 +101,11 @@ pub fn populate_inputs(
 /// Calculate witness based on serialized graph and inputs
 pub fn calculate_witness(
     input_list: HashMap<String, Vec<U256>>,
-    graph: &Graph,
+    graph_bytes: &[u8],
 ) -> eyre::Result<Vec<U256>> {
-    let mut inputs_buffer = get_inputs_buffer(get_inputs_size(graph));
-    let input_mapping = get_input_mapping(&input_list.keys().cloned().collect(), graph);
+    let graph = init_graph(graph_bytes)?; 
+    let mut inputs_buffer = get_inputs_buffer(get_inputs_size(&graph));
+    let input_mapping = get_input_mapping(&input_list.keys().cloned().collect(), &graph);
     populate_inputs(&input_list, &input_mapping, &mut inputs_buffer);
     Ok(graph::evaluate(
         &graph.nodes,
